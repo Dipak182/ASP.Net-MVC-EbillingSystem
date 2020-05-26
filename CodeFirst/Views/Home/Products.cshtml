@@ -1,0 +1,32 @@
+﻿@model IEnumerable<CodeFirst.Models.Admin.Product>
+
+@{
+    ViewBag.Title = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Products</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table>
+
+
+    @foreach (var item in Model)
+    {
+        <tr>
+
+            <td style="text-align: center">Product Name: @Html.DisplayFor(modelItem => item.ItemName)
+                <a href="Details">
+                    <input type="image" width="50px" src="~/Images/@item.ImageName"  style="border-radius:10px;" />
+                </a>
+                <br />
+                Description:    @Html.DisplayFor(modelItem => item.Description)<br />
+                Price:       @Html.DisplayFor(modelItem => item.Price)
+            </td>
+
+        </tr>
+    }
+
+</table>

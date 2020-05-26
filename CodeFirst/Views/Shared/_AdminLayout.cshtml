@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - My ASP.NET MVC Application</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/Scripts/modernizr-2.5.3.js"></script>
+    <script src="~/Scripts/jquery-1.7.1.js"></script>
+   @* <script src="~/Scripts/jquery-ui-1.8.20.js"></script>*@
+    @*<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>*@
+    <script src="~/Scripts/jquery.validate.js"></script>
+   @* <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>*@
+
+    <script src="~/Scripts/kendo.all.min.js"></script>
+    <link href="~/Content/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/Content/kendo.common.min.css" rel="stylesheet" />
+
+</head>
+<body>
+    <header>
+        <div class="content-wrapper">
+            <div class="float-left">
+                <p class="site-title">@Html.ActionLink("your logo here", "Index", "Home")</p>
+            </div>
+            <div class="float-right">
+                <section id="login">
+                </section>
+                <nav>
+
+                    @if (Session["RoleName"] != null)
+                    {
+                        <ul id="menu">
+                            @if (Session["RoleName"].ToString().Equals("SuperUser"))
+                            {
+                                <li>@Html.ActionLink("Roles", "UersRole", "Admin")</li>
+                                <li>@Html.ActionLink("Users", "UsersInfo", "Admin")</li>
+                                <li>@Html.ActionLink("Category", "Category", "Admin")</li>
+                                <li>@Html.ActionLink("Product", "Product", "Admin")</li>
+                                <li>@Html.ActionLink("Sales", "AddInBill", "Admin")</li>
+                            }
+                            else
+                            {
+                                <li>@Html.ActionLink("Sales", "AddInBill", "Admin")</li>
+                            }
+                            <li>@Html.ActionLink("Log out", "SingOut", "Admin")</li>
+
+
+                        </ul>
+                    }
+                </nav>
+            </div>
+        </div>
+    </header>
+    <div id="body">
+        @RenderSection("featured", required: false)
+        <section class="content-wrapper main-content clear-fix">
+            @RenderBody()
+        </section>
+    </div>
+    <footer>
+        <div class="content-wrapper">
+            <div class="float-left">
+                <p>&copy; @DateTime.Now.Year - My ASP.NET MVC Application</p>
+            </div>
+        </div>
+    </footer>
+
+
+</body>
+</html>

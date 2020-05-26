@@ -1,0 +1,186 @@
+﻿@model CodeFirst.Models.Admin.UsersRole
+
+@{
+    ViewBag.Title = "UersRole";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<link href="~/Content/jquery-ui.css" rel="stylesheet" />
+<script type="text/javascript">
+    $(document).ready(function () {
+        LoadGrid();
+
+        var validator = $(this).validate({
+            submitHandler: function () { SaveRecord(); },
+            rules:
+                {
+                    RoleName:
+                        {
+                            Required: true,
+                        }
+                },
+            messages:
+                {
+                    RoleName:
+                        {
+                            Required: "Enter Role Name",
+                        }
+                }
+        });
+
+    });
+
+    function SaveRecord() {
+
+        var roleId = $("#Id").val();
+        var roleName = $("#RoleName").val();
+        $.ajax({
+            url: '/Admin/UersRole',
+            type: 'POST',
+            data: { Id: roleId, RoleName: roleName },
+            success: function (data) {
+                var string = "Data Save Successfylly";
+                showSlidingMessage(string);
+                LoadGrid();
+            },
+            error: function (ex) {
+
+                var string = "Data Save Failed";
+                showSlidingMessage(string);
+            }
+        });
+
+    }
+
+    function LoadGrid() {
+        $("#rolesGrid").kendoGrid({
+            sortable: true,
+            pageable: true,
+            groupable: false,
+            filterable: true,
+            dataSource: {
+                transport: {
+                    read: "/Admin/GetRoles",
+                    dataType: "json"
+                },
+                schema: {
+                    model: {
+                        fields: {
+                            RoleName: { type: "string" },
+                            CreatedOn: { type: "date" },
+                            ModifyOn: { type: "date" },
+                            CreatedBy: { type: "number" },
+                            ModifyBy: { type: "number" }
+
+                        }
+                    }
+                },
+                pageSize: 10
+            },
+            height: 200,
+            columns: [
+            { field: "RoleName", title: "Role Name", sortable: true, filterable: true },
+            { field: "CreatedOn", title: "Created Date", format: "{0:MM/dd/yyyy}", sortable: true,filterable: true },
+            { field: "ModifyOn", title: "Modified Date", format: "{0:MM/dd/yyyy}", sortable: true, filterable: true},
+            { field: "CreatedBy", title: "Created By", sortable: true, filterable: true },
+            { field: "ModifyBy", title: "Modified By", sortable: true, filterable: true},
+            {
+                field: "Id", title: "Actions", sortable: false,
+                template: '<a href="@Url.Action("Delete")/#= Id #" class="delete-link">Delete</a>| <a href="@Url.Action("Edit")/#= Id #" class="Edit-link">Edit</a>',
+            }
+            ],
+            dataBound: function (event) {
+                $(".delete-link").click(function (e) {
+                    e.preventDefault();
+                    if (confirm("Do you want to delete this record?")) {
+                        var grid = $("#rolesGrid").data("kendoGrid");
+                       var dataItem = grid.dataItem($(this).closest("tr"));
+                       // grid.dataSource.remove(dataItem);
+                        $.ajax({
+                            url: '/Admin/DeleteRole',
+                            type: 'POST',
+                            data: { Id: dataItem.Id },
+                            success: function (data) {
+                                LoadGrid();
+                            },
+                            error: function (ex) {
+                                alert("failed");
+                            }
+                        });
+                    }
+                    return false;
+                });
+                $(".Edit-link").click(function (e) {
+                    e.preventDefault();
+                    //Only Fill Data Into Form
+                    var grid = $("#rolesGrid").data("kendoGrid");
+                    var dataItem = grid.dataItem($(this).closest("tr"));
+                    $("#Id").val(dataItem.Id);
+                    $("#RoleName").val(dataItem.RoleName);
+
+                });
+            }
+        });
+    }
+
+    function showSlidingMessage(str) {
+        $("#message").html(str);
+        $("#dialog").slideDown(1000);
+    }
+
+    function showSlidingMesageUp() {
+        $("#dialog").slideUp(1000);
+    }
+
+</script>
+
+
+
+@if (ViewData["message"] != null)
+{ 
+    <div>@ViewData["message"]; </div>
+}
+
+
+
+<div id="rolesGrid"></div>
+
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Create New Role</legend>
+        <div style="float: left">
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Id)
+                @Html.HiddenFor(model => model.Id)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.RoleName)
+                @Html.ValidationMessageFor(model => model.RoleName)
+            </div>
+
+            <p>
+                <input type="submit" value="Save" />
+            </p>
+        </div>
+        <div style="float: right">
+            <div id="dialog" style="width: 400px; height: 100px; background-color: #e8e6e6; border-style: solid; border-color: #808080; border-radius: 4px; display: none">
+                <div style="background-color: #ccc8c8; width: 100%">&nbsp;&nbsp;</div>
+                <br />
+
+                <span id="message" style="text-align: center; padding: 10px;"></span>
+                <br />
+
+                <button type="button" id="btnMsgOK" style="width: 40px; text-align: right; float: right" onclick="showSlidingMesageUp();">ok</button>
+            </div>
+        </div>
+
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+

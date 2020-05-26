@@ -1,0 +1,117 @@
+﻿@model CodeFirst.Models.Admin.UsersInfo
+
+@{
+    ViewBag.Title = "UsersInfo";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        LoadGrid();
+
+    });
+
+
+    function LoadGrid() {
+        $("#userinfo").kendoGrid({
+            sortable: true,
+            pageable: true,
+            groupable: false,
+
+            dataSource: {
+                transport: {
+                    read: "/Admin/GetAllUsers",
+                    dataType: "json"
+                },
+
+                pageSize: 10
+            },
+            height: 0,
+            columns: [
+            { field: "FirstName", title: "First Name", sortable: true },
+            { field: "LastName", title: "Last Name", sortable: true },
+            { field: "Email", title: "Email", sortable: true },
+            { field: "UserName", title: "User Name", sortable: true },
+            { field: "Password", title: "Password", sortable: true },
+            { field: "RoleName", title: "Role Name", sortable: true },
+
+            ],
+
+        });
+    }
+</script>
+
+<div id="userinfo"></div>
+
+@if (ViewData["message"] != null)
+{
+    <div>
+        @ViewData["message"];
+    </div>
+}
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Create New Users</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.FirstName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.FirstName)
+            @Html.ValidationMessageFor(model => model.FirstName)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.LastName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.LastName)
+            @Html.ValidationMessageFor(model => model.LastName)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Email)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Email)
+            @Html.ValidationMessageFor(model => model.Email)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.UserName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.UserName)
+            @Html.ValidationMessageFor(model => model.UserName)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Password)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Password)
+            @Html.ValidationMessageFor(model => model.Password)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RoleId)
+        </div>
+        <div class="editor-field">
+            @Html.DropDownList("RoleId", (IEnumerable<SelectListItem>)ViewBag.Roles)
+            @Html.ValidationMessageFor(model => model.RoleId)
+        </div>
+
+        <p>
+            <input type="submit" value=" Save " />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
